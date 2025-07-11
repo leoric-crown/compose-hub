@@ -1,0 +1,84 @@
+volumes:
+  db_storage:
+  n8n_storage:
+  prometheus_data:
+  grafana_data:
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_NON_ROOT_USER=${POSTGRES_NON_ROOT_USER}
+      - POSTGRES_NON_ROOT_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+    volumes:
+      - db_storage:/var/lib/postgresql/data
+      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: always
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_NON_ROOT_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_NON_ROOT_PASSWORD}
+      - NODE_EXTRA_CA_CERTS=/etc/ssl/certs/myLANrootCA.crt
+      - N8N_PROTOCOL=http
+      - N8N_HOST=n8n.lan
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
+      - N8N_ENCRYPTION_KEY=11XuWbcwIKzgst3XwQeODtSA2V6KokXf
+      - WEBHOOK_URL=https://n8n.lan
+      # - N8N_METRICS=true
+      # - N8N_METRICS_INCLUDE_DEFAULT_METRICS=true
+      # - N8N_METRICS_INCLUDE_CACHE_METRICS=true
+      # - N8N_METRICS_INCLUDE_MESSAGE_EVENT_BUS_METRICS=true
+      # - N8N_METRICS_INCLUDE_WORKFLOW_ID_LABEL=true
+      # - N8N_METRICS_INCLUDE_NODE_TYPE_LABEL=true
+      # - N8N_METRICS_INCLUDE_CREDENTIAL_TYPE_LABEL=true
+      # - N8N_METRICS_INCLUDE_API_ENDPOINTS=true
+      # - N8N_METRICS_INCLUDE_API_PATH_LABEL=true
+      # - N8N_METRICS_INCLUDE_API_METHOD_LABEL=true
+      # - N8N_METRICS_INCLUDE_API_STATUS_CODE_LABEL=true
+      # - N8N_METRICS_INCLUDE_QUEUE_METRICS=true
+      # - N8N_METRICS_QUEUE_METRICS_INTERVAL=20
+    dns:
+      - 10.3.14.2
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./myLANrootCA.crt:/etc/ssl/certs/myLANrootCA.crt:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #   ports:
+  #     - "9090:9090"
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   restart: unless-stopped
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=admin
+  #     - GF_SECURITY_ADMIN_PASSWORD=overBurden9
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #   ports:
+  #     - "3000:3000"

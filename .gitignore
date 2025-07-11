@@ -1,0 +1,8 @@
+# don't track dirs that are already remote repos
+crawl4ai
+
+# don't track private LAN certificate authority
+**/myLANrootCA.crt
+
+# don't track .env files
+**/.env

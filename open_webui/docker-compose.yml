@@ -1,0 +1,39 @@
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8080:8080" # Open WebUI UI + API
+    volumes:
+      - open-webui:/app/backend/data
+      - ./myLANrootCA.crt:/etc/ssl/certs/lan-ca.crt:ro
+    environment:
+      # point Python's SSL layer at your custom CA
+      - SSL_CERT_FILE=/etc/ssl/certs/lan-ca.crt
+      - WEBUI_SECRET_KEY=supersecretkey
+    depends_on:
+      - mcpo
+
+  mcpo:
+    image: ghcr.io/open-webui/mcpo:main
+    container_name: mcpo
+    restart: always
+    volumes:
+      - ./config.json:/config.json:ro
+    env_file:
+      - .env
+    command:
+      - "--config"
+      - "/config.json"
+      - "--api-key"
+      - "token"
+    ports:
+      - "10001:8000"
+
+volumes:
+  open-webui:
+    name: open-webui
+    external: true
