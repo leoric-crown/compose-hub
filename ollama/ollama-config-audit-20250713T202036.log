@@ -1,0 +1,43 @@
+2025-07-13 20:20:36 - Starting Ollama config audit.
+2025-07-13 20:20:36 - Log file: /home/leoric/compose-hub/ollama/ollama-config-audit-20250713T202036.log
+2025-07-13 20:20:36 - Checking user config at /home/leoric/.config/ollama/config.toml
+2025-07-13 20:20:36 - No user config found (using defaults).
+2025-07-13 20:20:36 - Checking system config at /etc/ollama/config.toml
+2025-07-13 20:20:36 - No system-wide config found.
+2025-07-13 20:20:36 - Capturing Ollama environment variables to /home/leoric/compose-hub/ollama/ollama-env-20250713T202036.txt
+2025-07-13 20:20:36 - No OLLAMA_ variables set.
+2025-07-13 20:20:36 - Inspecting systemd unit /etc/systemd/system/ollama.service
+2025-07-13 20:20:37 - Ollama service not registered.
+2025-07-13 20:20:37 - Inspecting override directory /etc/systemd/system/ollama.service.d
+2025-07-13 20:20:37 - Override directory exists, listing files:
+total 4
+-rw-r--r-- 1 root root 240 May 25 00:31 override.conf
+2025-07-13 20:20:37 - Dumping override.conf contents:
+[Service]
+Environment="OLLAMA_HOST=0.0.0.0:11434"
+Environment="OLLAMA_FLASH_ATTENTION=1"
+Environment="OLLAMA_KV_CACHE_TYPE=q4_0"
+Environment="OLLAMA_ORIGINS=*"
+Environment="OLLAMA_CONTEXT_LENGTH=16384"
+# Environment="OLLAMA_LLAMA_CPP=true"
+2025-07-13 20:20:37 - Checking data directory /home/leoric/.ollama
+2025-07-13 20:20:37 - Data directory size and structure:
+16K	/home/leoric/.ollama
+/home/leoric/.ollama:
+history
+id_ed25519
+id_ed25519.pub
+2025-07-13 20:20:37 - Preparing file list for archive
+2025-07-13 20:20:37 - Skipping missing path: /home/leoric/.config/ollama/config.toml
+2025-07-13 20:20:37 - Skipping missing path: /etc/ollama/config.toml
+2025-07-13 20:20:37 - Creating archive /home/leoric/compose-hub/ollama/ollama-config-20250713T202037-full.tar.gz
+/etc/systemd/system/ollama.service
+/etc/systemd/system/ollama.service.d/
+/etc/systemd/system/ollama.service.d/override.conf
+/home/leoric/compose-hub/ollama/ollama-env-20250713T202036.txt
+/home/leoric/.ollama/
+/home/leoric/.ollama/id_ed25519.pub
+/home/leoric/.ollama/history
+/home/leoric/.ollama/id_ed25519
+2025-07-13 20:20:37 - Audit complete. Archive created at: /home/leoric/compose-hub/ollama/ollama-config-20250713T202037-full.tar.gz
+2025-07-13 20:20:37 - Full details in log file: /home/leoric/compose-hub/ollama/ollama-config-audit-20250713T202036.log
