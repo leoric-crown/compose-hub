@@ -38,10 +38,17 @@ if [[ $# -ge 1 ]]; then
   fi
 fi
 
+# pick an emoji
+if [[ "$action" == "up" ]]; then
+  emoji="🚀"
+else
+  emoji="🛑"
+fi
+
 # loop through all subdirs with docker-compose.yml
 for dir in */; do
   if [[ -f "$dir/docker-compose.yml" ]]; then
-    echo "⏬ ${action^} in ${dir%/}…"
+    echo "${emoji} ${action^} in ${dir%/}…"
     (
       cd "$dir"
       if [[ "$action" == "up" ]]; then
